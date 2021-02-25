@@ -21,6 +21,7 @@ Options:
     --quiet          -q  Don't log stats.
 Examples:
     extract-gtfs-shapes -c 50 data/gtfs/shapes.txt shapes
+    cat data/gtfs/shapes.txt | extract-gtfs-shapes - shapes
 \n`)
 	process.exit(0)
 }
@@ -46,6 +47,9 @@ if (!pathToShapesFile) {
 	showError('Missing path-to-shapes-file parameter.')
 }
 const shapesFile = basename(pathToShapesFile)
+const src = pathToShapesFile === '-'
+	? process.stdin
+	: pathToShapesFile
 
 const outputDir = argv._[1]
 if (!outputDir) {
@@ -103,9 +107,13 @@ const quiet = !!(argv.quiet || argv.q)
 		newShapeStarts = true
 	}
 
-	for await (const row of readCsv(pathToShapesFile)) {
-		checkSorting(row)
+	for await (const row of readCsv(src)) {
 		rowsRead++
+		if (!row.shape_id || !row.shape_pt_sequence) {
+			process.stderr.write(`${shapesFile}:${rowsRead} has no shape_id/shape_pt_sequence`)
+			process.exit(1)
+		}
+		checkSorting(row)
 
 		if (!newShapeStarts && row.shape_id !== shapeId) await finishShape()
 

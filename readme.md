@@ -26,6 +26,7 @@ Options:
     --quiet          -q  Don't log stats.
 Examples:
     extract-gtfs-shapes -c 50 data/gtfs/shapes.txt shapes
+    cat data/gtfs/shapes.txt | extract-gtfs-shapes - shapes
 ```
 
 
