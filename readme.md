@@ -19,7 +19,11 @@ npm install -g extract-gtfs-shapes
 ## Usage
 
 ```
-todo
+Usage:
+    extract-gtfs-shapes <path-to-shapes-file> <output-directory>
+Options:
+Examples:
+    extract-gtfs-shapes data/gtfs/shapes.txt shapes
 ```
 
 
