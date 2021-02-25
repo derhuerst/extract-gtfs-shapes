@@ -8,6 +8,7 @@ const argv = mri(process.argv.slice(2), {
 	boolean: [
 		'help', 'h',
 		'version', 'v',
+		'quiet', 'q',
 	]
 })
 
@@ -16,8 +17,10 @@ if (argv.help || argv.h) {
 Usage:
     extract-gtfs-shapes <path-to-shapes-file> <output-directory>
 Options:
+    --concurrency    -c  How many files to write in parallel. Default: 32
+    --quiet          -q  Don't log stats.
 Examples:
-    extract-gtfs-shapes data/gtfs/shapes.txt shapes
+    extract-gtfs-shapes -c 50 data/gtfs/shapes.txt shapes
 \n`)
 	process.exit(0)
 }
@@ -49,7 +52,9 @@ if (!outputDir) {
 	showError('Missing output-directory parameter.')
 }
 
-const concurrency = 64 // todo: make customisable
+const concurrency = parseInt(argv.concurrency || argv.c || 32)
+
+const quiet = !!(argv.quiet || argv.q)
 
 ;(async () => {
 	const queue = new Queue({concurrency})
@@ -66,6 +71,15 @@ const concurrency = 64 // todo: make customisable
 	let shapeId = NaN
 	let points = ''
 
+	let rowsRead = 0
+	let filesWritten = 0
+	let tLastLog = Date.now()
+
+	const log = () => {
+		process.stdout.write(`${rowsRead} rows read, ${filesWritten} shape files written\n`)
+		tLastLog = Date.now()
+	}
+
 	const finishShape = async () => {
 		const path = pathJoin(outputDir, shapeId + '.geo.json')
 		const shape = `\
@@ -81,13 +95,17 @@ const concurrency = 64 // todo: make customisable
 }`
 		// write shape to disk
 		if (queue.size > concurrency * 3) await queue.onEmpty()
-		queue.add(async () => await writeFile(path, shape))
+		queue.add(async () => {
+			await writeFile(path, shape)
+			filesWritten++
+		})
 
 		newShapeStarts = true
 	}
 
 	for await (const row of readCsv(pathToShapesFile)) {
 		checkSorting(row)
+		rowsRead++
 
 		if (!newShapeStarts && row.shape_id !== shapeId) await finishShape()
 
@@ -98,6 +116,9 @@ const concurrency = 64 // todo: make customisable
 		} else {
 			points += `,[${row.shape_pt_lon},${row.shape_pt_lat}]`
 		}
+
+		if (Date.now() > (tLastLog + 5 * 1000)) log()
 	}
 	await finishShape()
+	log()
 })().catch(showError)

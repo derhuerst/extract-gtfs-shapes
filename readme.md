@@ -22,8 +22,10 @@ npm install -g extract-gtfs-shapes
 Usage:
     extract-gtfs-shapes <path-to-shapes-file> <output-directory>
 Options:
+    --concurrency    -c  How many files to write in parallel. Default: 32
+    --quiet          -q  Don't log stats.
 Examples:
-    extract-gtfs-shapes data/gtfs/shapes.txt shapes
+    extract-gtfs-shapes -c 50 data/gtfs/shapes.txt shapes
 ```
 
 
