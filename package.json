@@ -1,0 +1,41 @@
+{
+	"name": "extract-gtfs-shapes",
+	"description": "Extract shapes from a GTFS dataset.",
+	"version": "1.0.0",
+	"main": "index.js",
+	"bin": {
+		"extract-gtfs-shapes": "./cli.js"
+	},
+	"files": [
+		"cli.js",
+		"index.js",
+		"example.js"
+	],
+	"keywords": [
+		"gtfs",
+		"general transit feed specification",
+		"shapes",
+		"geojson",
+		"public transport",
+		"transit"
+	],
+	"author": "Jannis R <mail@jannisr.de>",
+	"homepage": "https://github.com/derhuerst/extract-gtfs-shapes",
+	"repository": "derhuerst/extract-gtfs-shapes",
+	"bugs": "https://github.com/derhuerst/extract-gtfs-shapes/issues",
+	"license": "ISC",
+	"engines": {
+		"node": ">=14"
+	},
+	"dependencies": {
+		"mri": "^1.1.6"
+	},
+	"devDependencies": {
+		"eslint": "^7.9.0"
+	},
+	"scripts": {
+		"test": "./test/index.js",
+		"lint": "eslint .",
+		"prepublishOnly": "npm run lint && npm test"
+	}
+}
