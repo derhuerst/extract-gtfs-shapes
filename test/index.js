@@ -20,7 +20,8 @@ const expected = {
 [60.0,-60.1],[61.0,-61.1]`,
 }
 
-execSync('rm -f out/*')
+execSync('rm -rf out')
+execSync('mkdir out')
 
 execSync('./cli.js -q -c 2 test/shapes.csv test/out', {
 	cwd: pathJoin(__dirname, '..'),
