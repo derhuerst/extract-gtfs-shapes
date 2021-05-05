@@ -29,6 +29,20 @@ Examples:
     cat data/gtfs/shapes.txt | extract-gtfs-shapes - shapes
 ```
 
+### from JavaScript
+
+Let's build a simple (and slower) clone of the the `extract-gtfs-shapes` CLI tool documented above:
+
+```js
+const {writeFile} = require('fs/promises')
+const extractGTFSShapes = require('extract-gtfs-shapes')
+
+const processShape = async (shapeId, shape) => {
+    await writeFile(shapeId + 'geo.json', shape)
+}
+await extractGTFSShapes('path/to/shapes.txt', processShape)
+```
+
 
 ## Contributing
 
