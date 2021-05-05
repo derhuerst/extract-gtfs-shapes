@@ -27,6 +27,14 @@ Options:
 Examples:
     extract-gtfs-shapes -c 50 data/gtfs/shapes.txt shapes
     cat data/gtfs/shapes.txt | extract-gtfs-shapes - shapes
+Notes:
+    extract-gtfs-shapes needs the GTFS shapes.txt to be sorted by
+    1. shape_id, alphanumerically
+    2. shape_pt_sequence, numerically
+    You can use Miller (https://miller.readthedocs.io/) and the
+    Unix tool sponge to do this:
+    mlr --csv sort -f shape_id -n shape_pt_sequence \
+      shapes.txt | sponge shapes.txt
 ```
 
 ### from JavaScript
