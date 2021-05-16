@@ -30,10 +30,12 @@ const extractGtfsShapes = async (pathToShapesTxtOrStream, onShape, opt = {}) => 
 		logger,
 		formatShape,
 		logProgress,
+		filter,
 	} = {
 		logger: console,
 		formatShape: formatShapeAsGeoJSONLineString,
 		logProgress: logProgressToStdout,
+		filter: /.+/,
 		...opt,
 	}
 
@@ -64,6 +66,8 @@ const extractGtfsShapes = async (pathToShapesTxtOrStream, onShape, opt = {}) => 
 			process.stderr.write(`${shapesFile}:${rowsRead} has no shape_id/shape_pt_sequence`)
 			process.exit(1)
 		}
+		rowsRead++
+		if (!filter.test(row.shape_id)) continue
 		checkSorting(row)
 
 		if (row.shape_id !== shapeId) {
@@ -73,7 +77,6 @@ const extractGtfsShapes = async (pathToShapesTxtOrStream, onShape, opt = {}) => 
 		}
 		points.push([row.shape_pt_lon, row.shape_pt_lat])
 
-		rowsRead++
 		if (Date.now() > (tLastLog + 5 * 1000)) {
 			tLastLog = Date.now()
 			logProgress({rowsRead, shapesProcessed})

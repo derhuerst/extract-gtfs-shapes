@@ -17,6 +17,8 @@ if (argv.help || argv.h) {
 Usage:
     extract-gtfs-shapes <path-to-shapes-file> <output-directory>
 Options:
+    --filter         -f  Filter by shape_id with a regular expression.
+                           Example: -f '3[abc]+'
     --concurrency    -c  How many files to write in parallel. Default: 32
     --quiet          -q  Don't log stats.
 Examples:
@@ -75,6 +77,9 @@ const onShape = async (shapeId, shape) => {
 const opt = {}
 if (argv.quiet || argv.q) {
 	opt.logProgress = () => {}
+}
+if (argv.filter || argv.f) {
+	opt.filter = new RegExp(argv.filter || argv.f, 'ui')
 }
 
 extractGtfsShapes(src, onShape, opt)
