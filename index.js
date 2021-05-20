@@ -71,7 +71,7 @@ const extractGtfsShapes = async (pathToShapesTxtOrStream, onShape, opt = {}) => 
 		checkSorting(row)
 
 		if (row.shape_id !== shapeId) {
-			if (rowsRead > 0) await processShape()
+			if (!Number.isNaN(shapeId)) await processShape()
 			shapeId = row.shape_id
 			points = []
 		}

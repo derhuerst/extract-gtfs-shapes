@@ -1,7 +1,7 @@
 {
 	"name": "extract-gtfs-shapes",
 	"description": "Command-line tool to extract shapes from a GTFS dataset.",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"main": "index.js",
 	"bin": {
 		"extract-gtfs-shapes": "./cli.js"

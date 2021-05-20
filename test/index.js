@@ -2,8 +2,8 @@
 
 const {execSync} = require('child_process')
 const {join: pathJoin} = require('path')
-const {readFileSync} = require('fs')
-const {strictEqual: eql} = require('assert')
+const {readFileSync, statSync} = require('fs')
+const {strictEqual: eql, throws} = require('assert')
 
 const expected = {
 	A: `\
@@ -44,5 +44,9 @@ for (const [shapeId, coords] of Object.entries(expected)) {
 	}
 }`, `${path} is invalid`)
 }
+
+throws(() => {
+	statSync(pathJoin(__dirname, 'out', 'NaN.geo.json'))
+}, {code: 'ENOENT'}, 'NaN.geo.json does not exist')
 
 console.log('files look correct ✔︎')
